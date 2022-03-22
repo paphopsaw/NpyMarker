@@ -1,7 +1,9 @@
 export default class Controller {
     view
-    constructor(view) {
+    state
+    constructor(view, state) {
         this.view = view
+        this.state = state
         this.addEventHandler();
 
     }
@@ -16,7 +18,15 @@ export default class Controller {
     }
     
     fileOnChangeHandler(e) {
-        //const file = e.target.files[0];
+        const file = e.target.files[0];
+        this.state.npyFile.setFile(file);
+        this.state.npyFile.loadHeader().then(() => {
+            console.log(this.state.npyFile.descr)
+            console.log(this.state.npyFile.fortranOrder)
+            console.log(this.state.npyFile.shape)
+        });
+
+        /*
         var raw = new Uint8ClampedArray(20*20*4); // 4 for RBGA
         raw[0] = 255;
         raw[3] = 255;
@@ -25,5 +35,7 @@ export default class Controller {
             .then(result => {
                 this.view.getChild("canvas").drawImage(result);
             });
+        */
+        
     }
 }

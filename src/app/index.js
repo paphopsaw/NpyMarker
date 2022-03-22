@@ -1,6 +1,7 @@
-import View from "./View"
+import view from "./View"
 import Controller from "./Controller";
+import state from "./AppState";
 
 const app = document.getElementById("App");
-View.init(app);
-const controller = new Controller(View);
+view.init(app);
+const controller = new Controller(view, state);
