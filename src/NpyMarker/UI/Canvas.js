@@ -9,7 +9,7 @@ export default class Canvas extends ViewElement{
     }
 
     drawImage(image) {
-        this.context.imageSmoothingEnabled = false;
+        this.context.imageSmoothingEnabled = true;
         this.context.drawImage(image, 0 , 0, this.width, this.height);
     }
 

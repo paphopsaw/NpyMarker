@@ -7,6 +7,6 @@ export default class Array2D {
     }
 
     get(i, j) {
-        return this.array[i * this.shape[0] + j];
+        return this.array[i * this.shape[1] + j];
     }
 }

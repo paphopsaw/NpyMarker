@@ -21,7 +21,7 @@ export default {
         root.append(fileInput, "fileInput");
         //Add canvas
         const canvas = new Canvas("2d");
-        canvas.setHeight(400);
+        canvas.setHeight(600);
         canvas.setWidth(600);
         root.append(canvas, "canvas")
         console.log(canvas.height);

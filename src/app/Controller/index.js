@@ -24,14 +24,13 @@ export default class Controller {
             console.log("elementType: " + this.state.npyFile.elementType)
             console.log("bytePerElement: " + this.state.npyFile.bytesPerElement)
             console.log("shape: " + this.state.npyFile.shape)
-            return this.state.npyFile.getSlice2DFrom3D(0, 0);
+            return this.state.npyFile.getSlice2DFrom3D(64, 0);
         }).then(array2d => {
             console.log(array2d);
-            this.state.colorMap.vmin = 1;
-            this.state.colorMap.vmax = 12;
+            this.state.colorMap.vmin = -5000;
+            this.state.colorMap.vmax = 5000;
             return this.state.colorMap.getImage(array2d);
         }).then(imageData => {
-            console.log(imageData);
             return createImageBitmap(imageData);
         }).then(bitmap => {
             console.log(bitmap);

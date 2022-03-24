@@ -6,7 +6,7 @@ export default class Colormap {
     vmax
     colorList
 
-    constructor(vmin = 0, vmax = 1, colorScale="rwb") {
+    constructor(vmin = 0, vmax = 1, colorScale="gray") {
         this.colorList = [];
         this.vmin = vmin;
         this.vmax = vmax;
@@ -22,8 +22,8 @@ export default class Colormap {
     }
 
     async getImage(array2d) {
-        const width = array2d.shape[0];
-        const height = array2d.shape[1];
+        const width = array2d.shape[1];
+        const height = array2d.shape[0];
         const raw = new Uint8ClampedArray(width*height*4); // 4 for RBGA
         /*Convert numbers in array2d into image rgb*/
         /* Can we accelerate this with WebGL? */
@@ -36,7 +36,6 @@ export default class Colormap {
                 raw[i * width * 4 + j * 4 + 3] = this.getColorInt(normalizedValue, 'a');
             }
         }
-        console.log(raw);
         return new ImageData(raw, width, height);
     }
 
