@@ -24,24 +24,18 @@ export default class Controller {
             console.log("elementType: " + this.state.npyFile.elementType)
             console.log("bytePerElement: " + this.state.npyFile.bytesPerElement)
             console.log("shape: " + this.state.npyFile.shape)
-            return this.state.npyFile.getData();
-        }).then((result) => {
-            console.log(result);
-            return this.state.npyFile.getSlice2DFrom3D(2, 2);
-        }).then((result => {
-            console.log(result);
-        }));
-
-        /*
-        var raw = new Uint8ClampedArray(20*20*4); // 4 for RBGA
-        raw[0] = 255;
-        raw[3] = 255;
-        var imageData = new ImageData(raw, 20,20);
-        const bitmap = createImageBitmap(imageData)
-            .then(result => {
-                this.view.getChild("canvas").drawImage(result);
-            });
-        */
-        
+            return this.state.npyFile.getSlice2DFrom3D(0, 0);
+        }).then(array2d => {
+            console.log(array2d);
+            this.state.colorMap.vmin = 0;
+            this.state.colorMap.vmax = 30;
+            return this.state.colorMap.getImage(array2d);
+        }).then(imageData => {
+            console.log(imageData);
+            return createImageBitmap(imageData);
+        }).then(bitmap => {
+            console.log(bitmap);
+            this.view.getChild("canvas").drawImage(bitmap);
+        });
     }
 }
