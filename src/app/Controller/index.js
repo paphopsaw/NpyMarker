@@ -27,7 +27,10 @@ export default class Controller {
             return this.state.npyFile.getData();
         }).then((result) => {
             console.log(result);
-        });
+            return this.state.npyFile.getSlice2DFrom3D(2, 2);
+        }).then((result => {
+            console.log(result);
+        }));
 
         /*
         var raw = new Uint8ClampedArray(20*20*4); // 4 for RBGA

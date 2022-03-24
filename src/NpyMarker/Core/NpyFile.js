@@ -1,3 +1,5 @@
+import Array2D from "./Array2D";
+
 function readFileAsync(file) {
     return new Promise((resolve, reject) => {
       let reader = new FileReader();
@@ -144,20 +146,38 @@ export default class NpyFile {
     **Works for C-order (Fortran-order will be future implementation)
      */
     async getSlice2DFrom3D(index, dimension) {
-        if (dimension.length !== 3) {
+        if (this.shape.length !== 3) {
             throw "getSlice2DFrom3D() only works for 3D numpy array.";
         }
-        if (index < 0 || index >= shape[dimension]) {
+        if (index < 0 || index >= this.shape[dimension]) {
             throw "Index " + index + " out of scope of (" + this.shape + ") array."
         }
         if (dimension === 0) {
-            
+            const array = this.getEmptyArray(this.shape[1] * this.shape[2]);
+            for (let i = 0; i < this.shape[1]; i++) {
+                for (let j = 0; j < this.shape[2]; j++) {
+                    array[i * this.shape[2] + j] = this.getElement(this.shape[1] * this.shape[2] * index + i * this.shape[2] + j)
+                }
+            }
+            return new Array2D([this.shape[1], this.shape[2]], array);
         }
         if (dimension === 1) {
-
+            const array = this.getEmptyArray(this.shape[0] * this.shape[2]);
+            for (let i = 0; i < this.shape[0]; i++) {
+                for (let j = 0; j < this.shape[2]; j++) {
+                    array[i * this.shape[2] + j] = this.getElement(this.shape[2] * index + this.shape[1] * this.shape[2] * i + j);
+                }
+            }
+            return new Array2D([this.shape[0], this.shape[2]], array);
         }
         if (dimension === 2) {
-
+            const array = this.getEmptyArray(this.shape[0] * this.shape[1]);
+            for (let i = 0; i < this.shape[0]; i++) {
+                for (let j = 0; j < this.shape[1]; j++) {
+                    array[i * this.shape[1] + j] = this.getElement(index + this.shape[1] * this.shape[2] * i + this.shape[2] * j);
+                }
+            }
+            return new Array2D([this.shape[0], this.shape[1]], array);
         }
     }
 }
