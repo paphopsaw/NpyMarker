@@ -22,6 +22,7 @@ export default class NpyFile {
     length
     size
     dataBuffer
+    dataView
 
     constructor(file) {
         this.file = file
@@ -46,87 +47,117 @@ export default class NpyFile {
         
 
         this.dataBuffer = contentBuffer.slice(10 + headerLength);
+        this.dataView = new DataView(this.dataBuffer);
     }
 
     async getData() {
-        const dataView = new DataView(this.dataBuffer);
+        const typedArray = this.getEmptyArray(this.length);
+        for (let i = 0; i < this.length; i++) {
+            typedArray[i] = this.getElement(i);
+        }
+        return typedArray
+    }
+
+    getElement(i) {
         if (this.elementType === 'f') {
             if (this.bytesPerElement == 4) {
-                const typedArray = new Float32Array(this.length);
-                for (let i = 0; i < this.length; i++) {
-                    typedArray[i] = dataView.getFloat32(i * this.bytesPerElement, this.littleEndian);
-                }
-                return typedArray;
+                return this.dataView.getFloat32(i * this.bytesPerElement, this.littleEndian);
             }
             if (this.bytesPerElement == 8) {
-                const typedArray = new Float64Array(this.length);
-                for (let i = 0; i < this.length; i++) {
-                    typedArray[i] = dataView.getFloat64(i * this.bytesPerElement, this.littleEndian);
-                }
-                return typedArray;
+                return this.dataView.getFloat64(i * this.bytesPerElement, this.littleEndian);
             }
         }
         if (this.elementType === 'i') {
             if (this.bytesPerElement == 1) {
-                const typedArray = new Int8Array(this.length);
-                for (let i = 0; i < this.length; i++) {
-                    typedArray[i] = dataView.getInt8(i * this.bytesPerElement, this.littleEndian);
-                }
-                return typedArray;
+                return this.dataView.getInt8(i * this.bytesPerElement, this.littleEndian);
             }
             if (this.bytesPerElement == 2) {
-                const typedArray = new Int16Array(this.length);
-                for (let i = 0; i < this.length; i++) {
-                    typedArray[i] = dataView.getInt16(i * this.bytesPerElement, this.littleEndian);
-                }
-                return typedArray;
+                return this.dataView.getInt16(i * this.bytesPerElement, this.littleEndian);
             }
             if (this.bytesPerElement == 4) {
-                const typedArray = new Int32Array(this.length);
-                for (let i = 0; i < this.length; i++) {
-                    typedArray[i] = dataView.getInt32(i * this.bytesPerElement, this.littleEndian);
-                }
-                return typedArray;
+                return this.dataView.getInt32(i * this.bytesPerElement, this.littleEndian);
             }
             if (this.bytesPerElement == 8) {
-                const typedArray = new BigInt64Array(this.length);
-
-                for (let i = 0; i < this.length; i++) {
-                    typedArray[i] = dataView.getBigInt64(i * this.bytesPerElement, this.littleEndian);
-                }
-                return typedArray;
+                return this.dataView.getBigInt64(i * this.bytesPerElement, this.littleEndian);
             }
             
         }
         if (this.elementType === 'u') {
             if (this.bytesPerElement == 1) {
-                const typedArray = new Uint8Array(this.length);
-                for (let i = 0; i < this.length; i++) {
-                    typedArray[i] = dataView.getUint8(i * this.bytesPerElement, this.littleEndian);
-                }
-                return typedArray;
+                return this.dataView.getUint8(i * this.bytesPerElement, this.littleEndian);
             }
             if (this.bytesPerElement == 2) {
-                const typedArray = new Uint16Array(this.length);
-                for (let i = 0; i < this.length; i++) {
-                    typedArray[i] = dataView.getUint16(i * this.bytesPerElement, this.littleEndian);
-                }
-                return typedArray;
+                return this.dataView.getUint16(i * this.bytesPerElement, this.littleEndian);
             }
             if (this.bytesPerElement == 4) {
-                const typedArray = new Uint32Array(this.length);
-                for (let i = 0; i < this.length; i++) {
-                    typedArray[i] = dataView.getUint32(i * this.bytesPerElement, this.littleEndian);
-                }
-                return typedArray;
+                return this.dataView.getUint32(i * this.bytesPerElement, this.littleEndian);
             }
             if (this.bytesPerElement == 8) {
-                const typedArray = new BigUint64Array(this.length);
-                for (i = 0; i < this.length; i++) {
-                    typedArray[i] = dataView.getBigUint64(i * this.bytesPerElement, this.littleEndian);
-                }
-                return typedArray;
+                return this.dataView.getBigUint64(i * this.bytesPerElement, this.littleEndian);
             }
+        }
+    }
+
+    getEmptyArray(length) {
+        if (this.elementType === 'f') {
+            if (this.bytesPerElement == 4) {
+                return new Float32Array(length);
+            }
+            if (this.bytesPerElement == 8) {
+                return new Float64Array(length);
+            }
+        }
+        if (this.elementType === 'i') {
+            if (this.bytesPerElement == 1) {
+                return new Int8Array(length);
+            }
+            if (this.bytesPerElement == 2) {
+                return new Int16Array(length);
+            }
+            if (this.bytesPerElement == 4) {
+                return new Int32Array(length);
+            }
+            if (this.bytesPerElement == 8) {
+                return new BigInt64Array(length);
+            }
+            
+        }
+        if (this.elementType === 'u') {
+            if (this.bytesPerElement == 1) {
+                return new Uint8Array(length);
+            }
+            if (this.bytesPerElement == 2) {
+                return new Uint16Array(length);
+            }
+            if (this.bytesPerElement == 4) {
+                return new Uint32Array(length);
+            }
+            if (this.bytesPerElement == 8) {
+                return new BigUint64Array(length);
+            }
+        }
+    }
+
+    /*
+    index: in the specified direction
+    dimension: 0, 1, or 2
+    **Works for C-order (Fortran-order will be future implementation)
+     */
+    async getSlice2DFrom3D(index, dimension) {
+        if (dimension.length !== 3) {
+            throw "getSlice2DFrom3D() only works for 3D numpy array.";
+        }
+        if (index < 0 || index >= shape[dimension]) {
+            throw "Index " + index + " out of scope of (" + this.shape + ") array."
+        }
+        if (dimension === 0) {
+            
+        }
+        if (dimension === 1) {
+
+        }
+        if (dimension === 2) {
+
         }
     }
 }
