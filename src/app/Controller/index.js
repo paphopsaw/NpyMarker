@@ -21,9 +21,12 @@ export default class Controller {
         const file = e.target.files[0];
         this.state.npyFile.setFile(file);
         this.state.npyFile.loadHeader().then(() => {
-            console.log(this.state.npyFile.descr)
-            console.log(this.state.npyFile.fortranOrder)
-            console.log(this.state.npyFile.shape)
+            console.log("elementType: " + this.state.npyFile.elementType)
+            console.log("bytePerElement: " + this.state.npyFile.bytesPerElement)
+            console.log("shape: " + this.state.npyFile.shape)
+            return this.state.npyFile.getData();
+        }).then((result) => {
+            console.log(result);
         });
 
         /*
