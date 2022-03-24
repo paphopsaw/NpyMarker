@@ -27,8 +27,8 @@ export default class Controller {
             return this.state.npyFile.getSlice2DFrom3D(0, 0);
         }).then(array2d => {
             console.log(array2d);
-            this.state.colorMap.vmin = 0;
-            this.state.colorMap.vmax = 30;
+            this.state.colorMap.vmin = 1;
+            this.state.colorMap.vmax = 12;
             return this.state.colorMap.getImage(array2d);
         }).then(imageData => {
             console.log(imageData);

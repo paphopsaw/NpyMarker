@@ -6,7 +6,7 @@ export default class Colormap {
     vmax
     colorList
 
-    constructor(vmin = 0, vmax = 1, colorScale="gray") {
+    constructor(vmin = 0, vmax = 1, colorScale="rwb") {
         this.colorList = [];
         this.vmin = vmin;
         this.vmax = vmax;
@@ -36,29 +36,38 @@ export default class Colormap {
                 raw[i * width * 4 + j * 4 + 3] = this.getColorInt(normalizedValue, 'a');
             }
         }
+        console.log(raw);
         return new ImageData(raw, width, height);
     }
 
     getColorList(colorScale) {
         if (colorScale === "gray") {
+            this.colorList = [];
             this.colorList.push(new Color(0, 0, 0));
             this.colorList.push(new Color(255,255,255));
         }
+        if (colorScale === "rwb") {
+            this.colorList = [];
+            this.colorList.push(new Color(255, 0, 0));
+            this.colorList.push(new Color(255,255,255));
+            this.colorList.push(new Color(0,0,255));
+        }
     }
 
-    getColorInt(value, color) {
-        if (color === 'r') {
-            return Math.round(this.colorList[0].r + value * (this.colorList[1].r - this.colorList[0].r));
+    getColorInt(normalizedValue, color) {
+        //If normalized Value is clipped return index before last index
+        if (normalizedValue >= 1) {
+            return this.colorList[this.colorList.length - 1][color];
         }
-        if (color === 'g') {
-            return Math.round(this.colorList[0].g + value * (this.colorList[1].g - this.colorList[0].g));
+        if (normalizedValue <= 0) {
+            return this.colorList[0][color];
         }
-        if (color === 'b') {
-            return Math.round(this.colorList[0].b + value * (this.colorList[1].b - this.colorList[0].b));
-        }
-        if (color === 'a') {
-            return Math.round(this.colorList[0].a + value * (this.colorList[1].a - this.colorList[0].a));
-        }
+        const numBlocks = this.colorList.length - 1;
+        let startIndex = Math.floor(normalizedValue * numBlocks);
+        let endIndex = startIndex + 1;
+        //Normalized within block
+        const rebaseValue = (normalizedValue - (startIndex / numBlocks)) * numBlocks;
+        return Math.round(this.colorList[startIndex][color] + rebaseValue * (this.colorList[endIndex][color] - this.colorList[startIndex][color]));
     }
 
 }
