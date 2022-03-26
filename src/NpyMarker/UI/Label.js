@@ -1,3 +1,5 @@
+import ViewElement from "./ViewElement";
+
 class LabelType {
     static H1 = new LabelType("h1");
     static H2 = new LabelType("h2");
@@ -12,22 +14,17 @@ class LabelType {
 }
 
 export {LabelType};
-export default class Label {
-    labelDOM;
-
+export default class Label extends ViewElement {
     constructor(labelType, text) {
+        super();
         if (!(labelType instanceof LabelType)) {
             throw "Invalid label type";
         }
-        this.labelDOM = document.createElement(labelType.type);
-        this.labelDOM.innerText = text;
+        this.domObject = document.createElement(labelType.type);
+        this.domObject.innerText = text;
     }
 
     setText() {
-        this.labelDOM.innerText = text;
-    }
-
-    getDOM() {
-        return this.labelDOM;
+        this.domObject.innerText = text;
     }
 }

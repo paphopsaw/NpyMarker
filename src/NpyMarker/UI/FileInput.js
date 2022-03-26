@@ -7,10 +7,6 @@ export default class FileInput extends ViewElement {
         this.domObject.setAttribute("type", "file");
     }
 
-    getDOM() {
-        return this.domObject;
-    }
-
     onChange(callback) {
         this.domObject.addEventListener("change" , function(e) {
             callback(e)
