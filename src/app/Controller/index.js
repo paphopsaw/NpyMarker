@@ -9,8 +9,10 @@ export default class Controller {
     }
 
     addEventHandler() {
-        this.view.getChild("canvas").onClick(this.canvasOnClickHandler.bind(this));
-        this.view.getChild("fileInput").onChange(this.fileOnChangeHandler.bind(this));
+        this.view.getElement("canvas").onClick(this.canvasOnClickHandler.bind(this));
+        this.view.getElement("fileInput").onChange(this.fileOnChangeHandler.bind(this));
+        this.view.getElement("radio-1").onChange(this.radioOnChangeHandler.bind(this));
+        this.view.getElement("radio-2").onChange(this.radioOnChangeHandler.bind(this));
     }
 
     canvasOnClickHandler(e) {
@@ -36,5 +38,9 @@ export default class Controller {
             console.log(bitmap);
             this.view.getChild("canvas").drawImage(bitmap);
         });
+    }
+
+    radioOnChangeHandler(e) {
+        console.log(e);
     }
 }

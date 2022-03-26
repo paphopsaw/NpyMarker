@@ -4,7 +4,6 @@ export default class ViewElement {
     height
     name
 
-
     getDOM() {
         return this.domObject;
     }
