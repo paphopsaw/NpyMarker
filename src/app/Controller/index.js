@@ -1,3 +1,10 @@
+function parseCSV(pointList) {
+    let csvString = ""
+    for (let point of pointList) {
+        csvString += point[0] + ", " + point[1] + ", " + point[2] + "\n";
+    }
+    return csvString;
+}
 export default class Controller {
     view
     state
@@ -34,11 +41,23 @@ export default class Controller {
                 this.view.getElement("radio-1").setChecked(true);
         }
         this.view.getElement("index-text").setValue(this.state.index);
+        this.view.getElement("marks-label").setText(parseCSV(this.state.marks));
 
     }
 
     canvasOnClickHandler(e) {
-        console.log(e.canvasX, e.canvasY);
+        const index = this.state.index;
+        const x = Math.round(e.canvasX);
+        const y = Math.round(e.canvasY);
+        if (this.state.dimension === 0) {
+            this.state.marks.push([index, x, y]);
+        } else if (this.state.dimension === 1) {
+            this.state.marks.push([x, index, y]);
+        } else if (this.state.dimension === 2) {
+            this.state.marks.push([x, y, index]);
+        }
+        this.renderUI()
+        this.renderCanvas();
     }
     
     fileOnChangeHandler(e) {

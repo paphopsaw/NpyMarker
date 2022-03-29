@@ -105,6 +105,7 @@ export default {
         marksLabel.setHeight(500);
         marksLabel.setOverflow("scroll");
         controlPanelContainer.appendChild(marksLabel);
+        root.register(marksLabel, "marks-label");
 
     },
 
