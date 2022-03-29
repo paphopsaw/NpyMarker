@@ -19,6 +19,13 @@ export default class Canvas extends ViewElement {
         this.context.drawImage(image, 0 , 0, this.width, this.height);
     }
 
+    drawPoint(x, y, pointSize = 3, color = "red") {
+        this.context.fillStyle = "red";
+        this.context.beginPath();
+        this.context.ellipse(x, y, pointSize / 2, pointSize / 2, 0, 0, 2 * Math.PI);
+        this.context.fill();
+    }
+
     onClick(callback) {
         const domObject = this.domObject
         domObject.addEventListener("click" , function(e) {

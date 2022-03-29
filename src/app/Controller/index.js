@@ -118,6 +118,24 @@ export default class Controller {
                 this.view.getElement("canvas").setWidth(bitmap.width);
                 this.view.getElement("canvas").setHeight(bitmap.height);
                 this.view.getElement("canvas").drawImage(bitmap);
+                //Draw points
+                for (let point of this.state.marks) {
+                    if (point[this.state.dimension] === this.state.index) {
+                        let x;
+                        let y;
+                        if (this.state.dimension === 0) {
+                            x = point[1];
+                            y = point[2];
+                        } else if (this.state.dimension === 1) {
+                            x = point[0];
+                            y = point[2];
+                        } else if (this.state.dimension === 2) {
+                            x = point[0];
+                            y = point[1];
+                        }
+                        this.view.getElement("canvas").drawPoint(x, y);
+                    }
+                }
             });
         }
     }
