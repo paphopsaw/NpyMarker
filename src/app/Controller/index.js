@@ -16,6 +16,7 @@ export default class Controller {
         this.view.getElement("radio-3").onChange(this.radioOnChangeHandler.bind(this));
         this.view.getElement("button-left").onClick(this.indexButtonOnClickHandler.bind(this, "left"));
         this.view.getElement("button-right").onClick(this.indexButtonOnClickHandler.bind(this, "right"));
+        this.view.getElement("index-text").onKeyup(this.indexTextOnKeyupHandler.bind(this));
     }
 
     renderUI() {
@@ -54,9 +55,7 @@ export default class Controller {
     radioOnChangeHandler(e) {
         this.state.dimension = parseInt(e.target.value);
         this.state.index = 0;
-        if (this.state.npyFile.file != null) {
-            this.renderCanvas();
-        }
+        this.renderCanvas();
         this.renderUI();
     }
 
@@ -75,18 +74,32 @@ export default class Controller {
         }
     }
 
+    indexTextOnKeyupHandler(e) {
+        //If press "Enter" (keycode = 13)
+        if (e.keyCode === 13) {
+            const inputString = e.target.value;
+            if (!isNaN(parseInt(inputString))) {
+                this.state.index = parseInt(inputString);
+            }
+            this.renderUI();
+            this.renderCanvas();
+        }
+    }
+
     renderCanvas() {
-        return this.state.npyFile.getSlice2DFrom3D(this.state.index, this.state.dimension)
-        .then(array2d => {
-            this.state.colorMap.vmin = -5000;
-            this.state.colorMap.vmax = 5000;
-            return this.state.colorMap.getImage(array2d, true);
-        }).then(imageData => {
-            return createImageBitmap(imageData);
-        }).then(bitmap => {
-            this.view.getElement("canvas").setWidth(bitmap.width);
-            this.view.getElement("canvas").setHeight(bitmap.height);
-            this.view.getElement("canvas").drawImage(bitmap);
-        });
+        if (this.state.npyFile.file != null) {
+            return this.state.npyFile.getSlice2DFrom3D(this.state.index, this.state.dimension)
+            .then(array2d => {
+                this.state.colorMap.vmin = -5000;
+                this.state.colorMap.vmax = 5000;
+                return this.state.colorMap.getImage(array2d, true);
+            }).then(imageData => {
+                return createImageBitmap(imageData);
+            }).then(bitmap => {
+                this.view.getElement("canvas").setWidth(bitmap.width);
+                this.view.getElement("canvas").setHeight(bitmap.height);
+                this.view.getElement("canvas").drawImage(bitmap);
+            });
+        }
     }
 }

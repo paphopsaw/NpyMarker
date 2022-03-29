@@ -14,4 +14,10 @@ export default class TextInput extends ViewElement {
         this.domObject.value = value;
     }
 
+    onKeyup(callback) {
+        this.domObject.addEventListener("keyup" , function(e) {
+            callback(e)
+        })
+    }
+
 }
