@@ -116,7 +116,7 @@ export default class Controller {
                 this.state.index = (this.state.index < 0) ? 0 : this.state.index;
             } else if (direction === "right") {
                 this.state.index += 1;
-                const maxIndex = this.state.npyFile.shape[this.state.dimesion] - 1;
+                const maxIndex = this.state.npyFile.shape[this.state.dimension] - 1;
                 this.state.index = (this.state.index > maxIndex) ? maxIndex : this.state.index;
             }
             this.renderUI();
@@ -130,6 +130,10 @@ export default class Controller {
             const inputString = e.target.value;
             if (!isNaN(parseInt(inputString))) {
                 this.state.index = parseInt(inputString);
+                //Check edges
+                this.state.index = (this.state.index < 0) ? 0 : this.state.index;
+                const maxIndex = this.state.npyFile.shape[this.state.dimension] - 1;
+                this.state.index = (this.state.index > maxIndex) ? maxIndex : this.state.index;
             }
             this.renderUI();
             this.renderCanvas();
@@ -148,6 +152,7 @@ export default class Controller {
             }).then(bitmap => {
                 this.view.getElement("canvas").setWidth(bitmap.width);
                 this.view.getElement("canvas").setHeight(bitmap.height);
+                this.view.getElement("canvas").setZoom(2);
                 this.view.getElement("canvas").drawImage(bitmap);
                 //Draw points
                 for (let pointString of this.state.marks) {
