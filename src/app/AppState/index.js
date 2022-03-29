@@ -3,5 +3,8 @@ import Colormap from "NpyMarker/Plot/Colormap"
 
 export default {
     npyFile: new NpyFile(),
-    colorMap: new Colormap()
+    colorMap: new Colormap(),
+    direction: 0,
+    index: 0,
+    marks: []
 }

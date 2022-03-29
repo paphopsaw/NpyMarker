@@ -5,7 +5,7 @@ export default class Controller {
         this.view = view
         this.state = state
         this.addEventHandler();
-
+        this.renderState();
     }
 
     addEventHandler() {
@@ -13,6 +13,27 @@ export default class Controller {
         this.view.getElement("fileInput").onChange(this.fileOnChangeHandler.bind(this));
         this.view.getElement("radio-1").onChange(this.radioOnChangeHandler.bind(this));
         this.view.getElement("radio-2").onChange(this.radioOnChangeHandler.bind(this));
+        this.view.getElement("radio-3").onChange(this.radioOnChangeHandler.bind(this));
+        this.view.getElement("button-left").onClick(this.indexButtonOnClickHandler.bind(this, "left"));
+        this.view.getElement("button-right").onClick(this.indexButtonOnClickHandler.bind(this, "right"));
+    }
+
+    renderState() {
+        switch (this.state.direction) {
+            case 0:
+                this.view.getElement("radio-1").setChecked(true);
+                break;
+            case 1:
+                this.view.getElement("radio-2").setChecked(true);
+                break;
+            case 2:
+                this.view.getElement("radio-3").setChecked(true);
+                break;
+            default:
+                this.view.getElement("radio-1").setChecked(true);
+        }
+        this.view.getElement("index-text").setValue(this.state.index);
+
     }
 
     canvasOnClickHandler(e) {
@@ -26,21 +47,45 @@ export default class Controller {
             console.log("elementType: " + this.state.npyFile.elementType)
             console.log("bytePerElement: " + this.state.npyFile.bytesPerElement)
             console.log("shape: " + this.state.npyFile.shape)
-            return this.state.npyFile.getSlice2DFrom3D(64, 0);
+            return this.state.npyFile.getSlice2DFrom3D(this.state.index, this.state.direction);
         }).then(array2d => {
             console.log(array2d);
             this.state.colorMap.vmin = -5000;
             this.state.colorMap.vmax = 5000;
-            return this.state.colorMap.getImage(array2d);
+            return this.state.colorMap.getImage(array2d, true);
         }).then(imageData => {
             return createImageBitmap(imageData);
         }).then(bitmap => {
-            console.log(bitmap);
-            this.view.getChild("canvas").drawImage(bitmap);
+            this.view.getElement("canvas").setWidth(bitmap.width);
+            this.view.getElement("canvas").setHeight(bitmap.height);
+            this.view.getElement("canvas").drawImage(bitmap);
         });
     }
 
     radioOnChangeHandler(e) {
-        console.log(e);
+        this.state.direction = parseInt(e.target.value);
+        this.state.index = 0;
+        this.state.npyFile.getSlice2DFrom3D(this.state.index, this.state.direction)
+        .then(array2d => {
+            console.log(array2d);
+            this.state.colorMap.vmin = -5000;
+            this.state.colorMap.vmax = 5000;
+            return this.state.colorMap.getImage(array2d, true);
+        }).then(imageData => {
+            return createImageBitmap(imageData);
+        }).then(bitmap => {
+            this.view.getElement("canvas").setWidth(bitmap.width);
+            this.view.getElement("canvas").setHeight(bitmap.height);
+            this.view.getElement("canvas").drawImage(bitmap);
+        });
+    }
+
+    indexButtonOnClickHandler(direction, e) {
+        if (direction === "left") {
+            this.state.index -= 1;
+        } else if (direction === "right") {
+            this.state.index += 1;
+        }
+        this.renderState();
     }
 }

@@ -34,6 +34,10 @@ export default class RadioButton extends ViewElement {
         this.radio.setAttribute("value", value);
     }
 
+    setChecked(checked) {
+        this.radio.setAttribute("checked", checked);
+    }
+
     onChange(callback) {
         this.radio.addEventListener("change" , function(e) {
             callback(e)

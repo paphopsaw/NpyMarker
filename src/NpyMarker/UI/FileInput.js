@@ -4,7 +4,7 @@ export default class FileInput extends ViewElement {
     constructor() {
         super();
         this.domObject = document.createElement("input");
-        this.domObject.setAttribute("type", "file");
+        this.domObject.type = "file";
     }
 
     onChange(callback) {

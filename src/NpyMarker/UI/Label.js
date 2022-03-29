@@ -24,7 +24,11 @@ export default class Label extends ViewElement {
         this.domObject.innerText = text;
     }
 
-    setText() {
+    setText(text) {
         this.domObject.innerText = text;
+    }
+
+    setOverflow(overflow) {
+        this.domObject.style.overflow = overflow;
     }
 }
