@@ -1,7 +1,7 @@
-function parseCSV(pointList) {
+function parseCSV(pointStringList) {
     let csvString = ""
-    for (let point of pointList) {
-        csvString += point[0] + ", " + point[1] + ", " + point[2] + "\n";
+    for (let pointString of pointStringList) {
+        csvString += pointString + "\n";
     }
     return csvString;
 }
@@ -17,6 +17,7 @@ export default class Controller {
 
     addEventHandler() {
         this.view.getElement("canvas").onClick(this.canvasOnClickHandler.bind(this));
+        this.view.getElement("canvas").onAuxClick(this.canvasOnAuxClickHandler.bind(this));
         this.view.getElement("fileInput").onChange(this.fileOnChangeHandler.bind(this));
         this.view.getElement("radio-1").onChange(this.radioOnChangeHandler.bind(this));
         this.view.getElement("radio-2").onChange(this.radioOnChangeHandler.bind(this));
@@ -46,15 +47,45 @@ export default class Controller {
     }
 
     canvasOnClickHandler(e) {
+        if (this.state.npyFile.file != null) {
+            const index = this.state.index;
+            const x = Math.round(e.canvasX);
+            const y = Math.round(e.canvasY);
+            if (this.state.dimension === 0) {
+                this.state.marks.add([index, x, y].toString());
+            } else if (this.state.dimension === 1) {
+                this.state.marks.add([x, index, y].toString());
+            } else if (this.state.dimension === 2) {
+                this.state.marks.add([x, y, index].toString());
+            }
+            this.renderUI()
+            this.renderCanvas();
+        }
+    }
+
+    canvasOnAuxClickHandler(e) {
         const index = this.state.index;
         const x = Math.round(e.canvasX);
         const y = Math.round(e.canvasY);
+        const halfEraserSize = 3;
         if (this.state.dimension === 0) {
-            this.state.marks.push([index, x, y]);
+            for (let i = -halfEraserSize; i < halfEraserSize + 1; i++) {
+                for (let j = -halfEraserSize; j < halfEraserSize + 1; j++) {
+                    this.state.marks.delete([index, x + i, y + j].toString());
+                }
+            }
         } else if (this.state.dimension === 1) {
-            this.state.marks.push([x, index, y]);
+            for (let i = -halfEraserSize; i < halfEraserSize + 1; i++) {
+                for (let j = -halfEraserSize; j < halfEraserSize + 1; j++) {
+                    this.state.marks.delete([x + i, index, y + j].toString());
+                }
+            }
         } else if (this.state.dimension === 2) {
-            this.state.marks.push([x, y, index]);
+            for (let i = -halfEraserSize; i < halfEraserSize + 1; i++) {
+                for (let j = -halfEraserSize; j < halfEraserSize + 1; j++) {
+                    this.state.marks.delete([x + i, y + j, index].toString());
+                }
+            }
         }
         this.renderUI()
         this.renderCanvas();
@@ -119,7 +150,8 @@ export default class Controller {
                 this.view.getElement("canvas").setHeight(bitmap.height);
                 this.view.getElement("canvas").drawImage(bitmap);
                 //Draw points
-                for (let point of this.state.marks) {
+                for (let pointString of this.state.marks) {
+                    const point = JSON.parse("[" + pointString + "]");
                     if (point[this.state.dimension] === this.state.index) {
                         let x;
                         let y;

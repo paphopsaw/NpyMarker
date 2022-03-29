@@ -6,5 +6,5 @@ export default {
     colorMap: new Colormap(),
     dimension: 0,
     index: 0,
-    marks: []
+    marks: new Set()
 }

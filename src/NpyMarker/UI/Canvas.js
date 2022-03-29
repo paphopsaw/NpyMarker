@@ -35,4 +35,14 @@ export default class Canvas extends ViewElement {
             callback(e)
         })
     }
+
+    onAuxClick(callback) {
+        const domObject = this.domObject
+        domObject.addEventListener("auxclick" , function(e) {
+            const rect = domObject.getBoundingClientRect();
+            e.canvasX = e.clientX - rect.left;
+            e.canvasY = e.clientY - rect.top;
+            callback(e)
+        })
+    }
 }
