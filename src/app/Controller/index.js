@@ -25,6 +25,8 @@ export default class Controller {
         this.view.getElement("button-left").onClick(this.indexButtonOnClickHandler.bind(this, "left"));
         this.view.getElement("button-right").onClick(this.indexButtonOnClickHandler.bind(this, "right"));
         this.view.getElement("index-text").onKeyup(this.indexTextOnKeyupHandler.bind(this));
+        this.view.getElement("save-marks-as-csv-botton").onClick(this.saveAsCsvButtonOnClickHandler.bind(this));
+        this.view.getElement("load-marks-from-csv-botton").onClick(this.loadFromCsvButtonOnClickHandler.bind(this));
     }
 
     renderUI() {
@@ -94,11 +96,14 @@ export default class Controller {
     fileOnChangeHandler(e) {
         const file = e.target.files[0];
         this.state.npyFile.setFile(file);
+        this.state.npyName = file.name;
         this.state.npyFile.loadHeader().then(() => {
             console.log("elementType: " + this.state.npyFile.elementType)
             console.log("bytePerElement: " + this.state.npyFile.bytesPerElement)
             console.log("shape: " + this.state.npyFile.shape)
-            return this.renderCanvas()
+            this.state.marks = new Set()
+            this.renderCanvas()
+            this.renderUI();
         });
     }
 
@@ -138,6 +143,19 @@ export default class Controller {
             this.renderUI();
             this.renderCanvas();
         }
+    }
+
+    saveAsCsvButtonOnClickHandler(e) {
+        const blob = new Blob([parseCSV(this.state.marks)],{ type: "text/plain;charset=utf-8" });
+        const blobUrl = URL.createObjectURL(blob);
+        var link = document.createElement("a");
+        link.href = blobUrl;
+        link.download = this.state.npyName.replace(/\.[^/.]+$/, "") +  "_marks_" + (new Date().toJSON().replaceAll(":", ".")) + ".csv";
+        link.click();
+    }
+
+    loadFromCsvButtonOnClickHandler(e) {
+
     }
 
     renderCanvas() {

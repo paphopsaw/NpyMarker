@@ -31,21 +31,24 @@ export default {
         const mainContainer = new VerticalContainer();
         mainContainer.setName("mainContainer");
         root.appendChild(mainContainer);
-        //Add title label
+
+        //1. Title label
         const title = new Label(LabelType.H1, "Welcome to NpyMarker");
         title.setName("title");
         mainContainer.appendChild(title);
-        //Add fileInput
+
+        //2. Add fileInput
         const fileInput = new FileInput();
         fileInput.setName("fileInput");
         mainContainer.appendChild(fileInput);
         root.register(fileInput, "fileInput");
 
-        //Working area
+        //3. Working area
         const workBenchContainer = new HorizontalContainer();
         workBenchContainer.setName("workBenchContainer");
         mainContainer.appendChild(workBenchContainer);
-        //Add canvas
+
+        //3.1 Canvas
         const canvas = new Canvas("2d");
         canvas.setWidth(800);
         canvas.setHeight(600);
@@ -53,10 +56,12 @@ export default {
         canvas.setBorder("black solid 1px");
         workBenchContainer.appendChild(canvas);
         root.register(canvas, "canvas");
-        //Control panel
+
+        //3.2 Control panel
         const controlPanelContainer = new VerticalContainer();
         workBenchContainer.appendChild(controlPanelContainer);
 
+        //3.2.1 Direction
         const directionContainer = new HorizontalContainer();
         controlPanelContainer.appendChild(directionContainer);
 
@@ -81,6 +86,7 @@ export default {
         directionContainer.appendChild(radio3);
         root.register(radio3, "radio-3");
 
+        //3.2.2 Index
         const indexContainer = new HorizontalContainer();
         controlPanelContainer.appendChild(indexContainer);
 
@@ -99,6 +105,7 @@ export default {
         indexContainer.appendChild(rightButton);
         root.register(rightButton, "button-right");
 
+        //3.2.3 Label
         const marksLabel = new Label(LabelType.P, "");
         marksLabel.setBorder("black solid 1px");
         marksLabel.setWidth(400);
@@ -106,6 +113,18 @@ export default {
         marksLabel.setOverflow("scroll");
         controlPanelContainer.appendChild(marksLabel);
         root.register(marksLabel, "marks-label");
+
+        //3.2.4 Marks file handling
+        const saveLoadContainer = new HorizontalContainer();
+        controlPanelContainer.appendChild(saveLoadContainer);
+
+        const saveButton = new Button("Save as csv file");
+        saveLoadContainer.appendChild(saveButton);
+        root.register(saveButton, "save-marks-as-csv-botton");
+
+        const loadButton = new Button("Load from csv file");
+        saveLoadContainer.appendChild(loadButton);
+        root.register(loadButton, "load-marks-from-csv-botton");
 
     },
 
